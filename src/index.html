@@ -7,9 +7,32 @@
 </head>
 <body>
     <div class="game-section">
-        <div class="score"></div>
+        <!-- breaks after the 10th digin -->
+        <div class="game-score"><span class="points">0</span> pts</div>
+        <div class="game-start">PRESS TO PLAY!</div>
         <div class="game-area"></div>
         <div class="game-over"></div>
     </div>
+
+    <script>
+        const gameStart = document.querySelector('.game-start');
+        const gameArea = document.querySelector('.game-area');
+        const gameScore = document.querySelector('.game-score');
+        const gameOver = document.querySelector('.game-over');
+
+        gameStart.addEventListener("click", onGameStart);
+
+        function onGameStart(event) {
+
+            gameStart.classList.add("hide");
+
+            const wizard = document.createElement("div");
+            wizard.style.top = "35%";
+            wizard.style.left = "20%";
+            wizard.classList.add("wizard");
+            gameArea.appendChild(wizard);
+        }
+
+    </script>
 </body>
 </html>
