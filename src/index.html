@@ -21,6 +21,8 @@
         const gameOver = document.querySelector('.game-over');
 
         gameStart.addEventListener("click", onGameStart);
+        document.addEventListener("keydown", onKeyDown);
+        document.addEventListener("keyup", onKeyUp);
 
         function onGameStart(event) {
 
@@ -31,6 +33,16 @@
             wizard.style.left = "20%";
             wizard.classList.add("wizard");
             gameArea.appendChild(wizard);
+        }
+
+        function onKeyDown(e) {
+        
+         keys[e.code] = true;
+        }
+
+        function onKeyUp(e) {
+
+         keys[e.code] = false;
         }
 
     </script>
