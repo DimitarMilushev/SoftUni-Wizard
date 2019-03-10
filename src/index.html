@@ -34,23 +34,27 @@
             height: 0 
         };
         let game = {
-            speed: 2 
+            speed: 10,
+            struggle: 3
         };
         let scene = {
             score: 0,
-            isActiveGame: true
+            isActiveGame: true,
+            height: gameArea.offsetHeight,
+            width: gameArea.offsetWidth
         };
 
         function onGameStart() {
             gameStart.classList.add("hide");
 
-            const wizard = document.createElement("div");
+            const wizard = document.createElement("div")
+            // Initial position
             wizard.style.top = player.y + "px";
             wizard.style.left = player.x + "px";
-            player.height = wizard.offsetHeight;
-            player.width = wizard.offsetWidth;
             wizard.classList.add("wizard");
             gameArea.appendChild(wizard);
+            player.height = wizard.offsetHeight;
+            player.width = wizard.offsetWidth;
 
             window.requestAnimationFrame(gameAction);
         }
@@ -60,25 +64,27 @@
           const wizard = document.querySelector(".wizard");
           scene.score++;
 
-          if(keys.ArrowUp) {
+          let isInAir = (player.y + player.height) <= scene.height;
+          if(isInAir) {
 
-              player.y -= game.speed;
-              wizard.style.top = player.y + "px";
+            player.y += game.struggle;          
           }
-          if(keys.ArrowDown) {
+
+          if(keys.ArrowUp && player.y > 0) {
+
+              player.y -= game.speed - game.struggle;
+          }
+          if(keys.ArrowDown && player.y < 0) {
 
               player.y += game.speed;
-              wizard.style.top = player.y + "px";
           }
-          if(keys.ArrowLeft) {
+          if(keys.ArrowLeft && player.x > 0) {
 
               player.x -= game.speed;
-              wizard.style.left = player.x + "px";
           }
-          if(keys.ArrowRight) {
+          if(keys.ArrowRight && player.x < scene.width / 2.5) {
 
               player.x += game.speed;
-              wizard.style.left = player.x + "px";
           }
 
           wizard.style.top = player.y + "px";
