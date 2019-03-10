@@ -11,7 +11,7 @@
         <div class="game-score"><span class="points">0</span> pts</div>
         <div class="game-start">PRESS TO PLAY!</div>
         <div class="game-area"></div>
-        <div class="game-over"></div>
+        <div class="game-over">Game Over</div>
     </div>
 
     <script>
@@ -21,47 +21,100 @@
         const gameOver = document.querySelector('.game-over');
         const gamePoints = gameScore.querySelector('.points');
 
+        gameOver.classList.add("hide");
+
         gameStart.addEventListener("click", onGameStart);
         document.addEventListener("keydown", onKeyDown);
         document.addEventListener("keyup", onKeyUp);
-
+        gameArea.addEventListener("click", actionButton);
+        gameOver.addEventListener("click", onGameOver);
+         
+        let initialPos = {
+            x: 300,
+            y: 200
+        };
+       
         let keys = {};
         
         let player = {
-            x: 300,
-            y: 200,
+            x: 0,
+            y: 0,
             width: 0,
-            height: 0 
+            height: 0,
+            castFire: 0
         };
         let game = {
             speed: 10,
-            struggle: 3
+            struggle: 3,
+            cloudSpawnInterval: 1000,
+
         };
+        
         let scene = {
             score: 0,
             isActiveGame: true,
             height: gameArea.offsetHeight,
-            width: gameArea.offsetWidth
+            width: gameArea.offsetWidth,
+            lastCloudSpawn: 0,
+            isFirstSpawn: true
         };
 
         function onGameStart() {
             gameStart.classList.add("hide");
 
-            const wizard = document.createElement("div")
-            // Initial position
+            if(scene.isFirstSpawn) {
+
+            const wizard = document.createElement("div");
             wizard.style.top = player.y + "px";
             wizard.style.left = player.x + "px";
             wizard.classList.add("wizard");
             gameArea.appendChild(wizard);
             player.height = wizard.offsetHeight;
             player.width = wizard.offsetWidth;
+            }
+            // Initial position
+            InitializePos();
 
+            
+
+            
             window.requestAnimationFrame(gameAction);
         }
 
         function gameAction(timestamp) {
 
           const wizard = document.querySelector(".wizard");
+
+          if (timestamp - scene.lastCloudSpawn > game.cloudSpawnInterval + 20000 * Math.random()) {
+                let cloud = document.createElement('div');
+                cloud.classList.add('cloud');
+                cloud.x = scene.width - 200;
+                cloud.style.left = cloud.x + 'px';
+                cloud.style.top = (scene.height - 200) * Math.random() + 'px';
+                gameArea.appendChild(cloud);
+                scene.lastCloudSpawn = timestamp;
+            }
+
+        let clouds = document.querySelectorAll(".cloud");
+        clouds.forEach((cloud) => {
+            cloud.x -= game.speed;
+            cloud.style.left = cloud.x + "px";
+
+            if(cloud.x + clouds.offsetWidth <= 0) {
+                cloud.parentElement.removeChild(cloud);
+            }
+        })
+
+          if(player.castFire > 0) {
+
+            wizard.style.backgroundImage = "url(./images/wizard-fire.png)";
+            player.castFire--;
+          }
+          else {
+
+             wizard.style.backgroundImage = "url(./images/wizard.png)";   
+          }
+
           scene.score++;
 
           let isInAir = (player.y + player.height) <= scene.height;
@@ -74,7 +127,7 @@
 
               player.y -= game.speed - game.struggle;
           }
-          if(keys.ArrowDown && player.y < 0) {
+          if(keys.ArrowDown) {
 
               player.y += game.speed;
           }
@@ -86,15 +139,48 @@
 
               player.x += game.speed;
           }
-
+       
           wizard.style.top = player.y + "px";
           wizard.style.left = player.x + "px";
 
+          if(player.y <= 0 || (player.y + player.height) >= scene.height) {
+
+              scene.isActiveGame = false;
+          }
           gamePoints.textContent = scene.score;
           
           if (scene.isActiveGame) {
+
                window.requestAnimationFrame(gameAction);
             }
+          else {
+              
+               showGameOver();
+          }
+        }
+
+        function InitializePos() {
+
+            player.x = initialPos.x;
+            player.y = initialPos.y;
+        }
+
+        function onGameOver(e) {
+
+            gameOver.classList.add("hide");
+            scene.isActiveGame = true;
+            scene.isFirstSpawn = false;
+            window.requestAnimationFrame(onGameStart);
+        }
+
+        function showGameOver() {
+         
+            gameOver.classList.remove("hide");
+        }
+
+        function actionButton(e) {
+           
+           player.castFire = 60;
         }
 
         function onKeyDown(e) {

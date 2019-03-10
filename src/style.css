@@ -14,6 +14,19 @@
     margin: 0;
 }
 
+.game-over {
+    position: absolute;
+    width: 50%;
+    background-color: brown;
+    top: 10rem;
+    left: 25%;
+    height: 50%;
+    font-size: 50px;    
+    z-index: 1;
+    text-align: center;
+    padding: 30px;
+}
+
 .game-start {
     position: absolute;
     background-color: burlywood;
@@ -22,6 +35,8 @@
     top: 10rem;
     height: 50%;
     text-align: center;
+    font-size: 50px;    
+
 }
 
 .game-score {
@@ -41,5 +56,14 @@
     height: 100px;
 
     background-image: url(./images/wizard.png);
+    background-size: cover;
+}
+
+.cloud {
+    z-index: 0;
+    position: absolute;
+    width: 308px;
+    height: 200px;
+    background-image: url(./images/cloud.png);
     background-size: cover;
 }
